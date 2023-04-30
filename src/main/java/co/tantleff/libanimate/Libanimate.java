@@ -33,7 +33,7 @@ public final class Libanimate extends JavaPlugin {
                 itemDisplay.setItemStack(new ItemStack(Material.STICK));
                 itemDisplay.setInterpolationDelay(-1);
                 itemDisplay.setInterpolationDuration(100);
-                itemDisplay.teleport(endLocation);
+                getServer().getScheduler().runTask(this, () -> itemDisplay.teleport(endLocation));
             });
 
             return true;
