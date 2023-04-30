@@ -1,0 +1,6 @@
+name: libanimate
+version: '${project.version}'
+main: co.tantleff.libanimate.Libanimate
+api-version: 1.19
+authors: [gIsForGravity]
+description: a library that allows for plugins to easily play animations
