@@ -23,7 +23,7 @@ public final class Libanimate extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-        saveResource("cutscenes/test.groovy", false);
+        saveResource("cutscenes/test.groovy", true);
 
         // Create a ScriptLoader to load scripts in that directory
         final var loader = new ScriptLoader<>(getDataFolder().toPath().resolve("cutscenes"), CutsceneScript.class);

@@ -1,1 +1,2 @@
-sayHi()
+sayHi ZOMBIE
+sayHi PLAYER
