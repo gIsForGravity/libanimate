@@ -1,12 +1,13 @@
 package co.tantleff.libanimate;
 
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.entity.ItemDisplay;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import co.tantleff.libanimate.scripting.CutsceneScript;
+import co.tantleff.libanimate.scripting.ScriptLoader;
+import groovy.lang.Binding;
+import org.bukkit.entity.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -14,27 +15,33 @@ public final class Libanimate extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        // Grab the folder that scripts are to be stored in
+        final var cutscenesFolder = getDataFolder().toPath().resolve("cutscenes");
+        try {
+            Files.createDirectories(cutscenesFolder);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        saveResource("cutscenes/test.groovy", false);
+
+        // Create a ScriptLoader to load scripts in that directory
+        final var loader = new ScriptLoader<>(getDataFolder().toPath().resolve("cutscenes"), CutsceneScript.class);
+
+        // make a command to run a simple test script
         Objects.requireNonNull(getCommand("testanimate")).setExecutor((commandSender, command, s, strings) -> {
             if (!(commandSender instanceof final Player caller))
                 return false;
 
             caller.sendMessage("doin the command or somethin");
 
-            caller.setGameMode(GameMode.SPECTATOR);
-
-            final var beginningLocation = caller.getLocation().add(0, 3, 0);
-            final var endLocation = beginningLocation.add(15, 0, 0);
-
-            assert caller.getLocation().getWorld() != null;
-
-            caller.getLocation().getWorld().spawn(beginningLocation, ItemDisplay.class, itemDisplay -> {
-                caller.setSpectatorTarget(itemDisplay);
-                itemDisplay.setItemStack(new ItemStack(Material.STICK));
-                itemDisplay.setInterpolationDelay(-1);
-                itemDisplay.setInterpolationDuration(100);
-                getServer().getScheduler().runTask(this, () -> itemDisplay.teleport(endLocation));
-            });
+            // Load and run script
+            try {
+                final var script = loader.loadScript("test.groovy", new Binding());
+                script.run();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             return true;
         });
