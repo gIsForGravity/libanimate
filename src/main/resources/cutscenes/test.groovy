@@ -1,2 +1,2 @@
-sayHi ZOMBIE
-sayHi PLAYER
+sayHi EntityType.ZOMBIE
+sayHi EntityType.PLAYER

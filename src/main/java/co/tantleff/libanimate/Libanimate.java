@@ -5,6 +5,7 @@ import co.tantleff.libanimate.scripting.ScriptLoader;
 import groovy.lang.Binding;
 import org.bukkit.entity.*;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,8 +26,13 @@ public final class Libanimate extends JavaPlugin {
 
         saveResource("cutscenes/test.groovy", true);
 
+        // Add certain classes to the imports for scripts
+        final var imports = new ImportCustomizer();
+        imports.addImport("EntityType", EntityType.class.getCanonicalName());
         // Create a ScriptLoader to load scripts in that directory
-        final var loader = new ScriptLoader<>(getDataFolder().toPath().resolve("cutscenes"), CutsceneScript.class);
+        final var loader = new ScriptLoader<>(getDataFolder().toPath().resolve("cutscenes"),
+                CutsceneScript.class,
+                imports);
 
         // make a command to run a simple test script
         Objects.requireNonNull(getCommand("testanimate")).setExecutor((commandSender, command, s, strings) -> {

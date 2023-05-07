@@ -4,6 +4,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,13 +15,14 @@ public class ScriptLoader<T extends Script> {
 //    private final Class<T> scriptClass;
     private final GroovyShell shell;
 
-    public ScriptLoader(Path scriptDirectory, Class<T> scriptClass) {
+    public ScriptLoader(Path scriptDirectory, Class<T> scriptClass, ImportCustomizer imports) {
         assert Files.isDirectory(scriptDirectory);
         this.scriptDirectory = scriptDirectory;
 //        this.scriptClass = scriptClass;
 
         final var config = new CompilerConfiguration();
         config.setScriptBaseClass(scriptClass.getCanonicalName());
+        config.addCompilationCustomizers(imports);
 
         this.shell = new GroovyShell(config);
     }
